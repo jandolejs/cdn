@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Images</title>
+    <style>
+        .image-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .image-table th, .image-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .image-table th {
+            background-color: #f2f2f2;
+        }
+        .image-preview-link {
+            text-decoration: none;
+            color: #007bff;
+            display: inline-block;
+            position: relative;
+        }
+        .image-preview-link:hover {
+            text-decoration: underline;
+        }
+        .image-preview {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            display: none;
+            max-width: 200px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        .image-preview-link:hover .image-preview {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manage Images</h1>
+    <form action="/manage" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <input type="submit" value="Upload Image">
+    </form>
+    
+    <h2>Uploaded Images:</h2>
+    <table class="image-table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('get_image_by_path', image_path=entry.path) }}" class="image-preview-link" target="_blank">
+                            {{ entry.path }}
+                            <img class="image-preview" src="{{ url_for('get_image_by_path', image_path=entry.path) }}" alt="Image {{ entry.path }}">
+                        </a>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_image', image_id=entry.id) }}" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

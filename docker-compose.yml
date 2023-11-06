@@ -1,0 +1,17 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./manage.html:/app/templates/manage.html
+    networks:
+      - other
+
+networks:
+  other:
+    name: other
+    external: true
