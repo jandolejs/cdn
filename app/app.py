@@ -1,4 +1,4 @@
-import os
+from os import environ
 from flask import Flask, request, send_from_directory, render_template, make_response, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -7,9 +7,9 @@ import magic
 import mimetypes
 
 app = Flask('cdn')
-app.debug = True
+#app.debug = True
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASS')}@{os.getenv('DATABASE_URL')}/{os.getenv('DATABASE_NAME')}"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{environ.get('DATABASE_USER')}:{environ.get('DATABASE_PASS')}@{environ.get('DATABASE_URL')}/{environ.get('DATABASE_NAME')}"
 
 db = SQLAlchemy(app)
 
