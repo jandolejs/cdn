@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY app .
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements
 RUN pip install python-dotenv
 
 EXPOSE 5000

@@ -4,3 +4,4 @@ Werkzeug==3.0.1
 Pillow==10.1.0
 mysqlclient==2.1.0
 python-magic==0.4.27
+Flask-HTTPAuth==4.8.0
