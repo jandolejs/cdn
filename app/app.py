@@ -64,7 +64,7 @@ def manage_images():
     if request.method == 'POST':
         if 'image' in request.files:
             image = request.files['image']
-            path = secure_filename(image.filename)
+            path = secure_filename(request.form["path"])
             image_data = image.read()
             mime_type = get_mime_type(image.filename)
             new_entry = ImageEntry(path=path, image_data=image_data, mime_type=mime_type)
