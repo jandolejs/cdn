@@ -5,13 +5,26 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 import magic
 import mimetypes
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask('cdn')
 #app.debug = True
+auth = HTTPBasicAuth()
+
+users = {
+    environ.get('HTTP_USER'): generate_password_hash(environ.get('HTTP_PASS'))
+}
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{environ.get('DATABASE_USER')}:{environ.get('DATABASE_PASS')}@{environ.get('DATABASE_URL')}/{environ.get('DATABASE_NAME')}"
 
 db = SQLAlchemy(app)
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
 
 def get_mime_type(file_path):
     mime, encoding = mimetypes.guess_type(file_path)
@@ -46,6 +59,7 @@ def get_image_by_path(image_path):
 
 
 @app.route('/', methods=['GET', 'POST'])
+@auth.login_required
 def manage_images():
     if request.method == 'POST':
         if 'image' in request.files:

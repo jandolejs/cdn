@@ -8,6 +8,8 @@ services:
         DATABASE_NAME: cdn
         DATABASE_USER: cdn
         DATABASE_PASS: cdn
+        HTTP_USER: dolejs
+        HTTP_PASS: $HTTP_PASSWORD
     networks:
       - other
     labels:
