@@ -59,7 +59,7 @@
                     <td>
                         <a href="{{ url_for('get_image_by_path', image_path=entry.path) }}" class="image-preview-link" target="_blank">
                             {{ entry.path }}
-                            <img class="image-preview" src="{{ url_for('get_image_by_path', image_path=entry.path) }}" alt="Image {{ entry.path }}">
+                            <img loading="lazy" class="image-preview" src="{{ url_for('get_image_by_path', image_path=entry.path) }}" alt="Image {{ entry.path }}">
                         </a>
                     </td>
                     <td>
