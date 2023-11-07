@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template, make_response, redirect, url_for
+from flask import Flask, request, send_from_directory, render_template, make_response, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from PIL import Image
@@ -31,15 +31,17 @@ def delete_image(image_id):
 
     return redirect(url_for('manage_images'))
 
-@app.route('/get_image/<path:image_path>')
+
+@app.route('/<path:image_path>')
 def get_image_by_path(image_path):
     entry = ImageEntry.query.filter_by(path=image_path).first()
     if entry:
         response = make_response(entry.image_data)
-        response.headers['Content-Type'] = entry.mime_type  # Adjust content type as needed
+        response.headers['Content-Type'] = entry.mime_type
         return response
     else:
         abort(404)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def manage_images():
@@ -54,6 +56,11 @@ def manage_images():
             db.session.commit()
     entries = ImageEntry.query.all()
     return render_template('manage.html', entries=entries)
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return "404 - File not Found", 404
 
 if __name__ == '__main__':
     with app.app_context():
