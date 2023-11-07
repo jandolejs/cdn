@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, send_from_directory, render_template, make_response, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -6,8 +7,9 @@ import magic
 import mimetypes
 
 app = Flask('cdn')
+app.debug = True
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://cdn:cdn@10.0.0.15/cdn'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASS')}@{os.getenv('DATABASE_URL')}/{os.getenv('DATABASE_NAME')}"
 
 db = SQLAlchemy(app)
 
@@ -65,5 +67,4 @@ def not_found_error(error):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0')

@@ -2,11 +2,10 @@ FROM python:3.8
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY app .
 
 RUN pip install -r requirements.txt
-
-COPY . .
+RUN pip install python-dotenv
 
 EXPOSE 5000
 
