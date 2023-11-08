@@ -55,7 +55,7 @@
     <form action="/" method="POST" enctype="multipart/form-data">
         <input type="file" name="image" onchange="updateFileName()" id="file-input">
         <br>
-        <input type="text" id="file-name-input" name="path">
+        <input type="text" id="file-name-input" name="name">
         <input type="submit" value="Upload Image">
     </form>
     
@@ -64,6 +64,7 @@
         <thead>
             <tr>
                 <th>Image</th>
+                <th>Hash</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -71,10 +72,13 @@
             {% for entry in entries %}
                 <tr>
                     <td>
-                        <a href="{{ url_for('get_image_by_path', image_path=entry.path) }}" class="image-preview-link" target="_blank">
-                            {{ entry.path }}
-                            <img loading="lazy" class="image-preview" src="{{ url_for('get_image_by_path', image_path=entry.path) }}" alt="Image {{ entry.path }}">
+                        <a href="{{ url_for('get_image_by_hash', hash=entry.hash) }}" class="image-preview-link" target="_blank">
+                            {{ entry.name }}
+                            <img loading="lazy" class="image-preview" src="{{ url_for('get_image_by_hash', hash=entry.hash) }}" alt="Image {{ entry.name }}">
                         </a>
+                    </td>
+                    <td>
+                        {{ entry.hash }}
                     </td>
                     <td>
                         <form action="{{ url_for('delete_image', image_id=entry.id) }}" method="POST">

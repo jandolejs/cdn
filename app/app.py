@@ -4,9 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from PIL import Image
 import magic
+import hashlib
+import time
 import mimetypes
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
+from urllib.parse import quote
 
 app = Flask('cdn')
 #app.debug = True
@@ -26,18 +29,20 @@ def verify_password(username, password):
             check_password_hash(users.get(username), password):
         return username
 
-def get_mime_type(file_path):
-    mime, encoding = mimetypes.guess_type(file_path)
+def get_mime_type(file_name):
+    mime, encoding = mimetypes.guess_type(file_name)
     return mime if mime else 'application/octet-stream'
 
 class ImageEntry(db.Model):
     __tablename__ = 'images'
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(255), unique=True, nullable=False)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+    hash = db.Column(db.String(255), unique=True, nullable=False)
     image_data = db.Column(db.LargeBinary)
     mime_type = db.Column(db.String(255), nullable=False)
 
 @app.route('/delete_image/<int:image_id>', methods=['POST'])
+@auth.login_required
 def delete_image(image_id):
     entry = ImageEntry.query.get(image_id)
     if entry:
@@ -46,10 +51,9 @@ def delete_image(image_id):
 
     return redirect(url_for('manage_images'))
 
-
-@app.route('/<path:image_path>')
-def get_image_by_path(image_path):
-    entry = ImageEntry.query.filter_by(path=image_path).first()
+@app.route('/<hash>')
+def get_image_by_hash(hash):
+    entry = ImageEntry.query.filter_by(hash=hash).first()
     if entry:
         response = make_response(entry.image_data)
         response.headers['Content-Type'] = entry.mime_type
@@ -64,12 +68,15 @@ def manage_images():
     if request.method == 'POST':
         if 'image' in request.files:
             image = request.files['image']
-            path = secure_filename(request.form["path"])
+            image_name = image.filename
+            name = request.form["name"]
+            mime_type = get_mime_type(image_name)
             image_data = image.read()
-            mime_type = get_mime_type(image.filename)
-            new_entry = ImageEntry(path=path, image_data=image_data, mime_type=mime_type)
+            hash = hashlib.md5(image_data).hexdigest()
+            new_entry = ImageEntry(name=name, hash=hash, image_data=image_data, mime_type=mime_type)
             db.session.add(new_entry)
             db.session.commit()
+            return redirect(url_for('manage_images'))
     entries = ImageEntry.query.all()
     return render_template('manage.html', entries=entries)
 
