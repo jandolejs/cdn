@@ -37,25 +37,11 @@
             display: block;
         }
     </style>
-    <script>
-        function updateFileName() {
-            const fileInput = document.getElementById("file-input");
-            const fileNameInput = document.getElementById("file-name-input");
-
-            if (fileInput.files.length > 0) {
-                fileNameInput.value = fileInput.files[0].name;
-            } else {
-                fileNameInput.value = "";
-            }
-        }
-    </script>
 </head>
 <body>
     <h1>Manage Images</h1>
     <form action="/" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" onchange="updateFileName()" id="file-input">
-        <br>
-        <input type="text" id="file-name-input" name="name">
+        <input type="file" name="images" onchange="updateFileName()" id="file-input" multiple>
         <input type="submit" value="Upload Image">
     </form>
     

@@ -1,3 +1,4 @@
+
 from os import environ
 from flask import Flask, request, send_from_directory, render_template, make_response, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
@@ -66,17 +67,15 @@ def get_image_by_hash(hash):
 @auth.login_required
 def manage_images():
     if request.method == 'POST':
-        if 'image' in request.files:
-            image = request.files['image']
-            image_name = image.filename
-            name = request.form["name"]
-            mime_type = get_mime_type(image_name)
+        for image in request.files.getlist('images'):
+            name = image.filename
+            mime_type = get_mime_type(name)
             image_data = image.read()
             hash = hashlib.md5(image_data).hexdigest()
             new_entry = ImageEntry(name=name, hash=hash, image_data=image_data, mime_type=mime_type)
             db.session.add(new_entry)
             db.session.commit()
-            return redirect(url_for('manage_images'))
+        return redirect(url_for('manage_images'))
     entries = ImageEntry.query.all()
     return render_template('manage.html', entries=entries)
 
