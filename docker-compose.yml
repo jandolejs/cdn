@@ -10,6 +10,7 @@ services:
         DATABASE_PASS: cdn
         HTTP_USER: dolejs
         HTTP_PASS: $HTTP_PASSWORD
+    restart: always
     networks:
       - other
     labels:
