@@ -4,7 +4,7 @@ services:
     build:
       context: .
     environment:
-        DATABASE_URL: database.jandolejs.cz
+        DATABASE_URL: $DATABASE_HOST
         DATABASE_NAME: cdn
         DATABASE_USER: cdn
         DATABASE_PASS: cdn
